@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pickers/src/hcb_date_picker_mode.dart';
+
+import 'hcb_date_picker_mode.dart';
 
 /// A material widget for selecting a date or time.
 ///

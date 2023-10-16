@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pickers/src/hcb_cupertino_date_picker.dart';
+import 'hcb_cupertino_date_picker.dart';
 import 'hcb_material_date_picker.dart';
 import 'hcb_date_picker_mode.dart';
 
