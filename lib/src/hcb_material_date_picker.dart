@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'adaptiveDatePickerMode.dart';
+import 'package:pickers/src/hcb_date_picker_mode.dart';
 
 /// A material widget for selecting a date or time.
 ///
@@ -14,7 +14,7 @@ import 'adaptiveDatePickerMode.dart';
 class MaterialDatePicker extends StatefulWidget {
   MaterialDatePicker(
       {Key? key,
-      this.mode = AdaptiveDatePickerMode.date,
+      this.mode = HCBAdaptiveDatePickerMode.date,
       required this.initialDate,
       required this.firstDate,
       required this.lastDate,
@@ -27,37 +27,26 @@ class MaterialDatePicker extends StatefulWidget {
       this.fontSize})
       : super(key: key);
 
-  /// The initially selected date. It must either fall between these dates, or be equal to one of them.
   final DateTime initialDate;
 
-  /// The earliest allowable date.
   final DateTime firstDate;
 
-  /// The latest allowable date.
   final DateTime lastDate;
 
-  /// Called when the user selects a date/time.
   final void Function(DateTime)? onChanged;
 
-  /// Determines whether to use Date or Time selector popups.
-  final AdaptiveDatePickerMode mode;
+  final HCBAdaptiveDatePickerMode mode;
 
-  /// The color to use when painting the text.
   final Color? textColor;
 
-  /// The color to fill in the background of the picker.
   final Color? backgroundColor;
 
-  /// The color to use when painting the bordr of the picker.
   final Color? borderColor;
 
-  /// The border width.
   final double? borderWidth;
 
-  /// The corner radius.
   final double? cornerRadius;
 
-  /// The font size of the selected item text.
   final double? fontSize;
 
   @override
@@ -77,7 +66,7 @@ class _MaterialDatePickerState extends State<MaterialDatePicker> {
         fontSize: widget.fontSize ?? 17,
         fontWeight: FontWeight.w400);
 
-    final formattedText = widget.mode == AdaptiveDatePickerMode.date
+    final formattedText = widget.mode == HCBAdaptiveDatePickerMode.date
         ? dateFormat.format(date)
         : timeFormat.format(date);
 
@@ -90,7 +79,7 @@ class _MaterialDatePickerState extends State<MaterialDatePicker> {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
             onTap: () async {
-              if (widget.mode == AdaptiveDatePickerMode.time) {
+              if (widget.mode == HCBAdaptiveDatePickerMode.time) {
                 var t = await showTimePicker(
                     context: context,
                     initialTime:

@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
-import 'uidatepicker.dart';
-import 'materialDatePicker.dart';
-import 'adaptiveDatePickerMode.dart';
+import 'dart:io';
 
-enum AdaptiveDatePickerType { adaptive, material, cupertino }
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:pickers/src/hcb_cupertino_date_picker.dart';
+import 'hcb_material_date_picker.dart';
+import 'hcb_date_picker_mode.dart';
 
 /// An adaptive widget for selecting from a date or time.
 ///
@@ -20,15 +21,15 @@ enum AdaptiveDatePickerType { adaptive, material, cupertino }
 /// picker's value. It should also call [State.setState] to rebuild the
 /// picker with the new value.
 ///
-class AdaptiveDatePicker extends StatelessWidget {
-  AdaptiveDatePicker(
+class HCBAdaptiveDatePicker extends StatelessWidget {
+  HCBAdaptiveDatePicker(
       {Key? key,
-      this.mode = AdaptiveDatePickerMode.date,
+      this.mode = HCBAdaptiveDatePickerMode.date,
       required this.initialDate,
       required this.firstDate,
       required this.lastDate,
       required this.onChanged,
-      this.type,
+      this.onEndEdit,
       this.textColor,
       this.backgroundColor,
       this.borderColor,
@@ -48,10 +49,11 @@ class AdaptiveDatePicker extends StatelessWidget {
   final DateTime lastDate;
 
   /// Determines whether to use Date or Time selector popups.
-  final AdaptiveDatePickerMode mode;
+  final HCBAdaptiveDatePickerMode mode;
 
   /// Called when the user selects a date/time.
   final void Function(DateTime)? onChanged;
+  final void Function(DateTime)? onEndEdit;
 
   /// The color to use when painting the text.
   final Color? textColor;
@@ -76,15 +78,25 @@ class AdaptiveDatePicker extends StatelessWidget {
 
   /// The date picker type to use. It is adaptive by default.
   /// When set to cupertino or adaptive it will instantinate a native platform picker when used with iOS.
-  final AdaptiveDatePickerType? type;
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    var t = type ?? AdaptiveDatePickerType.adaptive;
-    if (t != AdaptiveDatePickerType.material &&
-        theme.platform == TargetPlatform.iOS) {
-      return _buildCupertinoNativeDatePicker();
+    var isIos = Platform.isIOS;
+    if (isIos) {
+      return TextButton(
+          onPressed: () {
+            showCupertinoDialog(
+                context: context,
+                barrierDismissible: true,
+                builder: (_) => Dialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    child: _buildCupertinoNativeDatePicker(context)));
+          },
+          child: Text(
+            "Show Dialog",
+            style: TextStyle(fontSize: 24, color: Colors.black),
+          ));
     }
     return _buildMaterialDatePicker(context);
   }
@@ -105,21 +117,27 @@ class AdaptiveDatePicker extends StatelessWidget {
     );
   }
 
-  Widget _buildCupertinoNativeDatePicker() {
-    return UIDatePicker(
-        mode: mode == AdaptiveDatePickerMode.date
-            ? UIDatePickerMode.date
-            : UIDatePickerMode.time,
-        date: initialDate,
-        minimumDate: firstDate,
-        maximumDate: lastDate,
-        onChanged: onChanged,
-        textColor: textColor,
-        backgroundColor: backgroundColor,
-        borderColor: borderColor,
-        borderWidth: borderWidth,
-        cornerRadius: cornerRadius,
-        fontSize: fontSize,
-        tintColor: tintColor);
+  Widget _buildCupertinoNativeDatePicker(BuildContext context) {
+    return SizedBox(
+      width: 500,
+      height: 350,
+      child: HCBCupertinoDatePicker(
+          mode: mode == HCBAdaptiveDatePickerMode.date
+              ? HCBCupertinoDatePickerMode.date
+              : HCBCupertinoDatePickerMode.time,
+          selectedDate: initialDate,
+          minimumDate: firstDate,
+          maximumDate: lastDate,
+          onChanged: (date) {
+            onChanged?.call(date);
+          },
+          textColor: textColor,
+          backgroundColor: Colors.white,
+          borderColor: borderColor,
+          borderWidth: borderWidth,
+          cornerRadius: cornerRadius,
+          fontSize: fontSize,
+          tintColor: tintColor),
+    );
   }
 }

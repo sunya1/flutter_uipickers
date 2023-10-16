@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-enum UIDatePickerMode { time, date, dateAndTime }
+enum HCBCupertinoDatePickerMode { time, date, dateAndTime }
 
 /// A wrapper around the native iOS 14 UIDatePicker that allows
 /// selecting a date, time or date and time.
@@ -13,11 +13,11 @@ enum UIDatePickerMode { time, date, dateAndTime }
 /// picker's value. It should also call [State.setState] to rebuild the
 /// picker with the new value.
 ///
-class UIDatePicker extends StatefulWidget {
-  const UIDatePicker(
+class HCBCupertinoDatePicker extends StatefulWidget {
+  const HCBCupertinoDatePicker(
       {Key? key,
-      this.mode = UIDatePickerMode.date,
-      this.date,
+      this.mode = HCBCupertinoDatePickerMode.date,
+      this.selectedDate,
       this.minimumDate,
       this.maximumDate,
       this.textColor,
@@ -30,47 +30,35 @@ class UIDatePicker extends StatefulWidget {
       this.onChanged})
       : super(key: key);
 
-  /// The initially selected date. It must either fall between these dates, or be equal to one of them.
-  final DateTime? date;
+  final DateTime? selectedDate;
 
-  /// The earliest allowable date.
   final DateTime? maximumDate;
 
-  /// The latest allowable date.
   final DateTime? minimumDate;
 
-  /// Called when the user selects a date/time.
   final void Function(DateTime)? onChanged;
 
-  /// Determines whether to use Date, Time or Date+Time selector popups.
-  final UIDatePickerMode mode;
+  final HCBCupertinoDatePickerMode mode;
 
-  /// The color to use when painting the text.
   final Color? textColor;
 
-  /// The text color to use when the picker is highlighted.
   final Color? tintColor;
 
-  /// The color to fill in the background of the picker.
   final Color? backgroundColor;
 
-  /// The color to use when painting the bordr of the picker.
   final Color? borderColor;
 
-  /// The border width.
   final double? borderWidth;
 
-  /// The corner radius.
   final double? cornerRadius;
 
-  /// The font size of the selected item text.
   final double? fontSize;
 
   @override
-  State<UIDatePicker> createState() => _UIDatePickerState();
+  State<HCBCupertinoDatePicker> createState() => _HCBCupertinoDatePickerState();
 }
 
-class _UIDatePickerState extends State<UIDatePicker> {
+class _HCBCupertinoDatePickerState extends State<HCBCupertinoDatePicker> {
   MethodChannel? _channel;
 
   @override
@@ -79,8 +67,8 @@ class _UIDatePickerState extends State<UIDatePicker> {
     Map<String, dynamic> creationParams = <String, dynamic>{
       "mode": widget.mode.index,
     };
-    if (widget.date != null) {
-      creationParams["date"] = widget.date?.toIso8601String();
+    if (widget.selectedDate != null) {
+      creationParams["date"] = widget.selectedDate?.toIso8601String();
     }
     if (widget.minimumDate != null) {
       creationParams["minimumDate"] = widget.minimumDate?.toIso8601String();
@@ -113,10 +101,11 @@ class _UIDatePickerState extends State<UIDatePicker> {
     }
 
     if (_channel != null) {
-      _channel?.invokeMethod('setDate', widget.date?.toIso8601String());
+      _channel?.invokeMethod('setDate', widget.selectedDate?.toIso8601String());
       _channel?.invokeMethod(
           'setMinDate', widget.minimumDate?.toIso8601String());
     }
+
     return UiKitView(
       viewType: viewType,
       layoutDirection: TextDirection.ltr,
@@ -137,6 +126,7 @@ class _UIDatePickerState extends State<UIDatePicker> {
         if (widget.onChanged != null) {
           widget.onChanged!(date);
         }
+        break;
     }
   }
 }

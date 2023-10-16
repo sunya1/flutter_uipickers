@@ -22,8 +22,9 @@ class FLDatePicker: NSObject, FlutterPlatformView {
     ) {
         let argsDict = args as! Dictionary<String, Any>;
         let picker = UIDatePicker(frame: frame)
-        picker.preferredDatePickerStyle = .compact
-        picker.datePickerMode = UIDatePicker.Mode(rawValue: argsDict["mode"] as! Int)!
+
+        picker.preferredDatePickerStyle = .inline 
+        picker.datePickerMode = UIDatePicker.Mode(rawValue: 2)!
         if let dateStr = argsDict["date"] as? String {
             picker.date = FLDatePicker.inDateFormatter.date(from: dateStr) ?? Date()
         }
@@ -68,7 +69,7 @@ class FLDatePicker: NSObject, FlutterPlatformView {
                 lblView.setValue(textColor, forKey: "textColor")
             }
         }
-        picker.sizeToFit()
+
         _view = picker
         channel = FlutterMethodChannel(name: "FLDatePicker/\(viewId)", binaryMessenger: messenger!);
         super.init()
